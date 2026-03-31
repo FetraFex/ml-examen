@@ -20,7 +20,7 @@ function checkWinner(board) {
 }
 
 // API Configuration - Update with your Python backend URL
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://ml-examen-backend.onrender.com";
 
 // Helper function to convert board state to features array (18 binary features)
 // This follows the standard Tic-Tac-Toe encoding used in the UCI dataset
