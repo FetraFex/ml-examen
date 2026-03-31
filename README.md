@@ -67,11 +67,27 @@ Le notebook inclut aussi :
 | Fichier / dossier | Rôle |
 | ----------------- | ---- |
 | **`baseline_logistic_regression.ipynb`** | Notebook principal : baseline, métriques, fonctions réutilisables (`load_dataset`, `split_features_and_targets`, `train_logistic_regression`, `evaluate_binary_classifier`). |
-| **`requirements.txt`** | Dépendances Python : **pandas**, **scikit-learn**, **jupyter**, **notebook**, **jupyterlab**, **ipykernel**. |
+| **`requirements.txt`** | Dépendances Python : **pandas**, **scikit-learn**, **jupyter**, **notebook**, **jupyterlab**, **ipykernel**, **streamlit**. |
 | **`run_jupyter.sh`** | Lance **`jupyter lab`** avec `JUPYTER_CONFIG_DIR` pointant vers `jupyter_config/` (timeouts WebSocket cohérents, moins de warnings serveur). |
 | **`register_jupyter_kernel.sh`** | Enregistre le Python du **`.venv`** comme noyau Jupyter nommé **`ml-examen`** (`Python (ml-examen .venv)`), pour que `import pandas` fonctionne dans le notebook. |
 | **`jupyter_config/jupyter_server_config.py`** | Configuration **Jupyter Server** : `websocket_ping_interval` / `websocket_ping_timeout` alignés (évite l’avertissement sur les pings). |
 | **`ressources/`** | Dossier attendu pour **`dataset.csv`** (chemin relatif utilisé dans le notebook). |
+| **`src/board_encoding.py`** | Conversion plateau 3×3 → 18 features (même convention que le CSV). |
+| **`src/ml_baseline_service.py`** | Entraînement des deux régressions logistiques + prédictions (utilisé par l’interface, logique alignée sur le notebook). |
+| **`streamlit_app.py`** | Interface : **test des prédictions** sur un plateau encodé à la main, **Humain vs Humain**, **Humain vs IA** (heuristique ML). Ne modifie pas le notebook. |
+| **`docs/ARCHITECTURE.md`** | Vue d’ensemble des dossiers / fichiers cible hackathon. |
+| **`docs/PROCHAINES_ETAPES.md`** | Ordre recommandé : générateur → EDA → baseline → modèles avancés → interface complète → README final. |
+
+### Interface utilisateur (test des modèles)
+
+```bash
+cd ml-examen
+source .venv/bin/activate
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Ouvre l’URL affichée (souvent `http://localhost:8501`). Mode **« Test ML »** : régler chaque case (vide / X / O) et lire **P(x_wins)** et **P(is_draw)**. Les modes **Humain vs Humain** et **Humain vs IA** permettent de jouer ; l’IA utilise les mêmes modèles baseline (heuristique sur les coups possibles).
 
 ### Installation et exécution (résumé)
 
