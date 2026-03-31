@@ -1,0 +1,40 @@
+# Environnement virtuel (à recréer avec : python -m venv .venv && pip install -r requirements.txt)
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# JupyterLab : espaces de travail locaux (optionnel)
+jupyter_config/lab/workspaces/
+
+# Tests / outils
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Secrets et variables d’environnement
+.env
+.env.*
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~

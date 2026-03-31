@@ -37,4 +37,63 @@
 | <img src="https://avatars.githubusercontent.com/u/144239227?v=4" width="50" style="border-radius:50%"> | **ANDRIANTSOA** Velotiana Todisoa Angelo  | IGGLIA 4 | 22  |
 | <img src="https://avatars.githubusercontent.com/u/110011721?v=4" width="50" style="border-radius:50%"> | **RAKOTOARISOA** Fanaja Manoa Ny Avo      | IGGLIA 4 | 32  |
 | <img src="https://avatars.githubusercontent.com/u/117814535?v=4" width="50" style="border-radius:50%"> | **NOMESAHANINA** Aiky                     | IGGLIA 4 | 35  |
-| <img src="https://avatars.githubusercontent.com/u/165788737?v=4" width="50" style="border-radius:50%"> | **ANDRIANARAHINJAKA** Yohannee Aintsoa    | IGGLIA 4 | 54  |
+| <img src="https://avatars.githubusercontent.com/165788737?v=4" width="50" style="border-radius:50%"> | **ANDRIANARAHINJAKA** Yohannee Aintsoa    | IGGLIA 4 | 54  |
+
+---
+
+## Baseline Machine Learning — Morpion (régression logistique)
+
+Cette section décrit **tout ce qui a été ajouté ou mis à jour** pour la baseline : fichiers, rôles et utilisation.
+
+### Fonctionnalités du notebook `baseline_logistic_regression.ipynb`
+
+| Étape | Description |
+| ----- | ----------- |
+| Chargement | Lecture du CSV (`ressources/dataset.csv`) avec **pandas** |
+| Features / cibles | 18 colonnes binaires `c0_x, c0_o, …, c8_o` ; cibles **`x_wins`** et **`is_draw`** |
+| Découpage | **Train / test 80/20** (`train_test_split`), un seul split aligné pour les deux cibles |
+| Modèles | Deux **`LogisticRegression`** (sklearn), une par cible |
+| Prédictions | Sur le jeu de test |
+| Métriques | **Accuracy**, **F1-score**, **matrice de confusion**, **`classification_report`** |
+| Comparaison | Tableau récapitulatif (`pandas.DataFrame`) des deux modèles |
+
+Le notebook inclut aussi :
+
+- Une **cellule de vérification** du Python utilisé (chemin doit contenir `.venv` si tu travailles dans l’environnement virtuel du projet).
+- Des **métadonnées de noyau** réglées sur **`Python (ml-examen .venv)`** pour éviter d’ouvrir par défaut le mauvais interpréteur.
+
+### Fichiers du dépôt (rôles)
+
+| Fichier / dossier | Rôle |
+| ----------------- | ---- |
+| **`baseline_logistic_regression.ipynb`** | Notebook principal : baseline, métriques, fonctions réutilisables (`load_dataset`, `split_features_and_targets`, `train_logistic_regression`, `evaluate_binary_classifier`). |
+| **`requirements.txt`** | Dépendances Python : **pandas**, **scikit-learn**, **jupyter**, **notebook**, **jupyterlab**, **ipykernel**. |
+| **`run_jupyter.sh`** | Lance **`jupyter lab`** avec `JUPYTER_CONFIG_DIR` pointant vers `jupyter_config/` (timeouts WebSocket cohérents, moins de warnings serveur). |
+| **`register_jupyter_kernel.sh`** | Enregistre le Python du **`.venv`** comme noyau Jupyter nommé **`ml-examen`** (`Python (ml-examen .venv)`), pour que `import pandas` fonctionne dans le notebook. |
+| **`jupyter_config/jupyter_server_config.py`** | Configuration **Jupyter Server** : `websocket_ping_interval` / `websocket_ping_timeout` alignés (évite l’avertissement sur les pings). |
+| **`ressources/`** | Dossier attendu pour **`dataset.csv`** (chemin relatif utilisé dans le notebook). |
+
+### Installation et exécution (résumé)
+
+```bash
+cd ml-examen
+python3 -m venv .venv
+source .venv/bin/activate   # Windows : .venv\Scripts\activate
+pip install -r requirements.txt
+./register_jupyter_kernel.sh
+./run_jupyter.sh
+```
+
+Puis dans le navigateur : ouvrir **`baseline_logistic_regression.ipynb`**, vérifier le noyau **`Python (ml-examen .venv)`**, exécuter toutes les cellules (**Run → Run All Cells**).
+
+### Problèmes fréquents
+
+| Symptôme | Cause probable | Piste |
+| -------- | -------------- | ----- |
+| `No module named 'pandas'` | Le noyau Jupyter n’est pas le **`.venv`** | `./register_jupyter_kernel.sh` puis **Kernel → Change Kernel… → Python (ml-examen .venv)** |
+| `Kernel does not exist` | Session / serveur redémarré | Recharger la page ou **Kernel → Restart** |
+| Erreurs `/lab/api/...` ou `Stream is closed` | Plusieurs clients (IDE + navigateur) sur le même port | Un seul client à la fois, ou utiliser `./run_jupyter.sh` |
+
+---
+
+*Dernière mise à jour de cette section : documentation des scripts et du notebook baseline (régression logistique Morpion).*
