@@ -39,7 +39,7 @@ Ce projet a été réalisé dans le cadre de l'examen de Machine Learning à l'I
 L'architecture suit une séparation stricte entre la logique de données et l'interface utilisateur :
 
 - `root` : Fichiers de configuration et documentation.
-- `backend/` : Serveur **FastAPI** gérant les prédictions du modèle.
+- `server/` : Serveur **FastAPI** gérant les prédictions du modèle.
   - `main.py` : Points de terminaison de l'API.
   - `models/` : Modèles sérialisés (`.pkl`).
 - `frontend/` : Interface client développée avec **React**.
