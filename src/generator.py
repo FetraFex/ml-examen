@@ -135,4 +135,5 @@ def generate_tic_tac_toe_dataset():
     
     print(f"Génération terminée : {len(df)} états uniques enregistrés dans ressources/dataset.csv")
 
-generate_tic_tac_toe_dataset()
+if __name__ == 'main':
+    generate_tic_tac_toe_dataset()
