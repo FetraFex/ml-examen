@@ -771,9 +771,9 @@ function GameBoard({ mode, onBack }) {
     if (isAIThinking) return;
 
     const newBoard = [...board];
-    newBoard[idx] = "X";
+    newBoard[idx] = xIsNext ? "X" : "O";
     setBoard(newBoard);
-    setXIsNext(false);
+    setXIsNext(p => !p);      
     setRipple({ idx, key: Date.now() });
   };
 
