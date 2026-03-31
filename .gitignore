@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environnement virtuel (à recréer avec : python -m venv .venv && pip install -r requirements.txt)
 .venv/
 venv/
@@ -38,3 +39,14 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+=======
+# .gitgnore
+
+# Environnement virtuel
+.venv/
+
+# Bytecode python
+__pycache__/
+*.pyc
+*.pyo
+>>>>>>> a74a1e000a9ba0e7499c4fa972484358dc819ae1

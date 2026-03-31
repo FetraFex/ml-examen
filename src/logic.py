@@ -1,34 +1,60 @@
-import numpy as np
 import joblib
+import numpy as np
 import os
+import warnings
 
-# Chemins vers les futurs modèles (Step 2 & 3 du sujet)
-MODEL_X_WINS = "models/model_x_wins.joblib"
-MODEL_IS_DRAW = "models/model_is_draw.joblib"
+# On cache les avertissements de version de XGBoost pour y voir plus clair
+warnings.filterwarnings("ignore", category=UserWarning)
 
-def get_ml_features(board):
-    """
-    Transforme le plateau ['X', '', 'O'...] en vecteur de 18 features (Step 2.1)
-    Ordre : [c0_x, c0_o, c1_x, c1_o, ..., c8_x, c8_o]
-    """
-    features = []
-    for cell in board:
-        features.append(1 if cell == "X" else 0) # ci_x
-        features.append(1 if cell == "O" else 0) # ci_o
-    return np.array(features).reshape(1, -1)
+# Chemin absolu pour éviter les erreurs de dossier
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(BASE_DIR, "ressources", "model_xgboost_wins.pkl")
 
 def get_best_move_ml(board):
     """
-    Logique pour le mode 'vs IA (ML)'
+    Analyse chaque case vide et choisit celle qui MINIMISE 
+    la probabilité de victoire de l'humain (X).
     """
-    # Si le fichier modèle n'existe pas encore, on joue au hasard
-    if not os.path.exists(MODEL_X_WINS):
+    if not os.path.exists(MODEL_PATH):
+        print(f"ATTENTION : Modèle introuvable. Mode Random.")
         import random
         empty = [i for i, c in enumerate(board) if c == ""]
         return random.choice(empty) if empty else None
 
-    # TODO : Une fois le modèle entraîné par tes collègues :
-    # 1. Charger le modèle : model = joblib.load(MODEL_X_WINS)
-    # 2. Pour chaque case vide, simuler le coup et prédire la probabilité de victoire
-    # 3. Retourner l'index de la case avec la proba la plus haute
-    return None
+    try:
+        model = joblib.load(MODEL_PATH)
+    except Exception as e:
+        print(f"Erreur chargement : {e}")
+        return None
+
+    empty_cells = [i for i, val in enumerate(board) if val == ""]
+    best_move = None
+    
+    # --- CORRECTION ICI : Le nom de la variable doit être identique partout ---
+    min_proba_val = float('inf') 
+
+    for move_index in empty_cells:
+        temp_board = list(board)
+        temp_board[move_index] = "O"
+        
+        # Encodage 18 features
+        features = []
+        for cell in temp_board:
+            features.append(1 if cell == "X" else 0)
+            features.append(1 if cell == "O" else 0)
+        
+        input_data = np.array(features).reshape(1, -1)
+        
+        # Prédiction de la probabilité que X gagne
+        # [0][1] correspond à la classe "1" (Victoire de X)
+        proba_X_wins = model.predict_proba(input_data)[0][1]
+        
+        # On cherche le coup qui donne la probabilité la plus basse pour X
+        if proba_X_wins < min_proba_val:
+            min_proba_val = proba_X_wins
+            best_move = move_index
+
+    if best_move is not None:
+        print(f"IA joue case {best_move} (Confiance victoire adverse : {min_proba_val:.2f})")
+    
+    return best_move
