@@ -224,7 +224,7 @@ def main() -> None:
                         f2 = board_full(b2)
                         if not w2 and not f2:
                             if human_is_x:
-                                mv = best_move_for_o(model_x, b2)
+                                mv = best_move_for_o(model_x, model_d, b2)
                                 if mv is not None:
                                     b2[mv] = "O"
                             else:

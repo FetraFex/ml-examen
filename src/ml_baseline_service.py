@@ -77,26 +77,38 @@ def predict_proba_for_row(
     return float(px[1]), float(px[0]), float(pd_[1]), float(pd_[0])
 
 
+def _combined_ml_score(
+    model_x: LogisticRegression,
+    model_d: LogisticRegression,
+    feature_row: List[int],
+) -> float:
+    """
+    Score aligné sur l’IA hybride : P(x_wins=1) * 1 + P(is_draw=1) * 0.5.
+    Utilise les **deux** modèles (même formule que les feuilles du Minimax).
+    """
+    p_x1, _, p_d1, _ = predict_proba_for_row(model_x, model_d, feature_row)
+    return p_x1 * 1.0 + p_d1 * 0.5
+
+
 def best_move_for_x(
     model_x: LogisticRegression,
     model_d: LogisticRegression,
     board: List[str],
 ) -> Optional[int]:
     """
-    Heuristique simple : parmi les cases vides, jouer X là où P(x_wins) est max
-    (utile quand c'est au tour de X). Sinon None.
+    IA **ML seul** (greedy, profondeur 1) : pour chaque coup possible de X,
+    encoder le plateau résultant et calculer le score combiné des deux modèles ;
+    choisir le coup qui **maximise** ce score.
     """
-    del model_d  # réservé pour heuristiques plus riches
     candidates = [i for i in range(9) if board[i] == ""]
     if not candidates:
         return None
-    best_i, best_score = None, -1.0
+    best_i, best_score = None, float("-inf")
     for i in candidates:
         b = list(board)
         b[i] = "X"
         row = board_to_feature_row(b)
-        X = pd.DataFrame([feature_row_to_dict(row)])[FEATURE_COLS]
-        s = float(model_x.predict_proba(X)[0, 1])
+        s = _combined_ml_score(model_x, model_d, row)
         if s > best_score:
             best_score, best_i = s, i
     return best_i
@@ -104,19 +116,22 @@ def best_move_for_x(
 
 def best_move_for_o(
     model_x: LogisticRegression,
+    model_d: LogisticRegression,
     board: List[str],
 ) -> Optional[int]:
-    """Heuristique : O minimise P(x_wins) du joueur X après le coup."""
+    """
+    IA **ML seul** : pour chaque coup possible de O, même score combiné ;
+    O cherche à **minimiser** ce score (moins favorable à X).
+    """
     candidates = [i for i in range(9) if board[i] == ""]
     if not candidates:
         return None
-    best_i, best_score = None, 2.0
+    best_i, best_score = None, float("inf")
     for i in candidates:
         b = list(board)
         b[i] = "O"
         row = board_to_feature_row(b)
-        X = pd.DataFrame([feature_row_to_dict(row)])[FEATURE_COLS]
-        s = float(model_x.predict_proba(X)[0, 1])
+        s = _combined_ml_score(model_x, model_d, row)
         if s < best_score:
             best_score, best_i = s, i
     return best_i

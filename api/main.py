@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
 
 from src.board_encoding import board_to_feature_row
+from src.hybrid_minimax import board_str_to_int, get_best_move
 from src.ml_baseline_service import (
     best_move_for_o,
     best_move_for_x,
@@ -135,5 +136,22 @@ def ai_move(body: AiMoveIn):
     if body.role == "X":
         idx = best_move_for_x(mx, md, b)
     else:
-        idx = best_move_for_o(mx, b)
+        idx = best_move_for_o(mx, md, b)
+    return AiMoveOut(index=idx)
+
+
+@app.post("/api/hybrid-move", response_model=AiMoveOut)
+def hybrid_move(body: BoardIn):
+    """
+    Coup optimal selon Minimax (profondeur 3) avec feuilles évaluées par les modèles ML.
+    Plateau : mêmes chaînes que /api/predict (interne : 0 / 1 / -1).
+    """
+    if _models is None:
+        raise HTTPException(503, "Dataset introuvable")
+    mx, md, _ = _models
+    try:
+        b_int = board_str_to_int(body.board)
+    except ValueError as e:
+        raise HTTPException(422, str(e))
+    idx = get_best_move(b_int, mx, md)
     return AiMoveOut(index=idx)

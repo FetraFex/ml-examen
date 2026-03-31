@@ -106,6 +106,8 @@ export default function App() {
     }
   }, []);
 
+  const [aiVariant, setAiVariant] = useState("ml"); // "ml" | "hybrid"
+
   const fetchAiMove = useCallback(async (board, role) => {
     const r = await fetch("/api/ai-move", {
       method: "POST",
@@ -117,13 +119,25 @@ export default function App() {
     return data.index;
   }, []);
 
+  const fetchHybridMove = useCallback(async (board) => {
+    const r = await fetch("/api/hybrid-move", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ board }),
+    });
+    if (!r.ok) throw new Error("IA hybride indisponible");
+    const data = await r.json();
+    return data.index;
+  }, []);
+
   useEffect(() => {
     if (mode !== "hvm") return;
     const b = hvmBoard;
     if (!humanIsX && !b.some(Boolean) && !winner(b) && !hvmInit) {
       (async () => {
         try {
-          const idx = await fetchAiMove(b, "X");
+          const idx =
+            aiVariant === "hybrid" ? await fetchHybridMove(b) : await fetchAiMove(b, "X");
           if (idx != null) {
             const nb = [...b];
             nb[idx] = "X";
@@ -135,7 +149,7 @@ export default function App() {
         }
       })();
     }
-  }, [mode, humanIsX, hvmBoard, hvmInit, fetchAiMove]);
+  }, [mode, humanIsX, hvmBoard, hvmInit, fetchAiMove, fetchHybridMove, aiVariant]);
 
   const cycleTestCell = (i) => {
     const nb = [...testBoard];
@@ -164,7 +178,8 @@ export default function App() {
     if (w || f) return;
     try {
       const role = humanIsX ? "O" : "X";
-      const ai = await fetchAiMove(nb, role);
+      const ai =
+        aiVariant === "hybrid" ? await fetchHybridMove(nb) : await fetchAiMove(nb, role);
       if (ai != null) {
         nb[ai] = role;
         setHvmBoard([...nb]);
@@ -304,6 +319,35 @@ export default function App() {
                 }}
               />
               <label htmlFor="hx">Tu joues les X (sinon tu joues O, l’IA ouvre)</label>
+            </div>
+            <div className="toggle-row" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
+              <span style={{ color: "var(--muted)" }}>Stratégie IA :</span>
+              <label>
+                <input
+                  type="radio"
+                  name="aivar"
+                  checked={aiVariant === "ml"}
+                  onChange={() => {
+                    setAiVariant("ml");
+                    setHvmBoard(empty());
+                    setHvmInit(false);
+                  }}
+                />{" "}
+                ML seul
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="aivar"
+                  checked={aiVariant === "hybrid"}
+                  onChange={() => {
+                    setAiVariant("hybrid");
+                    setHvmBoard(empty());
+                    setHvmInit(false);
+                  }}
+                />{" "}
+                Hybride (Minimax 3 + ML)
+              </label>
             </div>
             <p className={`game-status ${wHvm ? "win" : full(hvmBoard) && !wHvm ? "draw" : ""}`}>
               {!wHvm && !full(hvmBoard) && humanTurnHvm && "À toi de jouer"}
