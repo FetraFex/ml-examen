@@ -1,1 +1,9 @@
-.venv
+# .gitgnore
+
+# Environnement virtuel
+.venv/
+
+# Bytecode python
+__pycache__/
+*.pyc
+*.pyo
