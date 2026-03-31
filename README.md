@@ -120,7 +120,7 @@ Difficulté d'apprentissage : Le modèle is_draw est plus difficile à apprendre
 Erreurs types : Les modèles se trompent le plus dans les positions de "fin de partie" avec beaucoup de pions, là où une seule erreur de blocage change radicalement l'issue, ou sur les "fourchettes" que la Régression Logistique (modèle linéaire) a du mal à percevoir.
 
 Q4 — Mode Hybride (Minimax + ML)
-Différence de comportement : Le mode Hybride est visiblement plus "froid" et impitoyable. Contrairement au mode ML pur qui peut parfois faire une erreur bête (car il ne "voit" pas le futur, il réagit statistiquement), l'Hybride ne rate jamais un coup gagnant et bloque systématiquement l'adversaire.
+Différence de comportement : Le mode Hybride est visiblement plus doué. Contrairement au mode ML pur qui peut parfois faire une erreur bête (car il ne "voit" pas le futur, il réagit statistiquement), l'Hybride ne rate jamais un coup gagnant et bloque systématiquement l'adversaire.
 
 Évitement des pièges : Oui, le joueur hybride évite parfaitement les pièges (comme les doubles menaces) car le Minimax explore tout l'arbre des possibles. Là où le ML pur pourrait privilégier une case "statistiquement bonne" mais perdante à cause d'une tactique précise, l'Hybride choisit la case mathématiquement sûre.
 
