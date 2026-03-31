@@ -36,7 +36,7 @@ Ce projet a été réalisé dans le cadre de l'examen de Machine Learning à l'I
 
 ## Structure du Répertoire
 
-L'architecture suit une séparation stricte entre la logique de données et l'interface utilisateur :
+L'architecture suit une séparation stricte entre la logique de données et l'interface utilisateur:
 
 - `root` : Fichiers de configuration et documentation.
 - `server/` : Serveur **FastAPI** gérant les prédictions du modèle.
