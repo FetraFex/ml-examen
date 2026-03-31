@@ -64,7 +64,7 @@ def main() -> None:
         model_x, model_d, meta = cached_models()
     except FileNotFoundError as e:
         st.error(str(e))
-        st.info("Place `ressources/dataset.csv` puis relance l'application.")
+        st.info("Place `ressources/dataset2.csv` puis relance l'application.")
         return
 
     st.sidebar.success(f"Modèles OK — {meta['n_samples']} lignes dans le CSV.")

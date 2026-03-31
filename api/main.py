@@ -114,7 +114,7 @@ def health():
 @app.post("/api/predict", response_model=PredictOut)
 def predict(body: BoardIn):
     if _models is None:
-        raise HTTPException(503, "Dataset introuvable — placez ressources/dataset.csv")
+        raise HTTPException(503, "Dataset introuvable — placez ressources/dataset2.csv")
     mx, md, _ = _models
     row = board_to_feature_row(body.board)
     p_x1, p_x0, p_d1, p_d0 = predict_proba_for_row(mx, md, row)

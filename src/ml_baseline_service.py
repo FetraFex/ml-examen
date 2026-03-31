@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from .board_encoding import FEATURE_COLS, board_to_feature_row, feature_row_to_dict
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_DATA_PATH = PROJECT_ROOT / "ressources" / "dataset.csv"
+DEFAULT_DATA_PATH = PROJECT_ROOT / "ressources" / "dataset2.csv"
 
 TARGET_X_WINS = "x_wins"
 TARGET_IS_DRAW = "is_draw"

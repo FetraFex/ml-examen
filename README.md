@@ -49,7 +49,7 @@ Cette section décrit **tout ce qui a été ajouté ou mis à jour** pour la bas
 
 | Étape | Description |
 | ----- | ----------- |
-| Chargement | Lecture du CSV (`ressources/dataset.csv`) avec **pandas** |
+| Chargement | Lecture du CSV (`ressources/dataset2.csv`) avec **pandas** |
 | Features / cibles | 18 colonnes binaires `c0_x, c0_o, …, c8_o` ; cibles **`x_wins`** et **`is_draw`** |
 | Découpage | **Train / test 80/20** (`train_test_split`), un seul split aligné pour les deux cibles |
 | Modèles | Deux **`LogisticRegression`** (sklearn), une par cible |
@@ -71,7 +71,7 @@ Le notebook inclut aussi :
 | **`run_jupyter.sh`** | Lance **`jupyter lab`** avec `JUPYTER_CONFIG_DIR` pointant vers `jupyter_config/` (timeouts WebSocket cohérents, moins de warnings serveur). |
 | **`register_jupyter_kernel.sh`** | Enregistre le Python du **`.venv`** comme noyau Jupyter nommé **`ml-examen`** (`Python (ml-examen .venv)`), pour que `import pandas` fonctionne dans le notebook. |
 | **`jupyter_config/jupyter_server_config.py`** | Configuration **Jupyter Server** : `websocket_ping_interval` / `websocket_ping_timeout` alignés (évite l’avertissement sur les pings). |
-| **`ressources/`** | Dossier attendu pour **`dataset.csv`** (chemin relatif utilisé dans le notebook). |
+| **`ressources/`** | Fichier de données principal : **`dataset2.csv`** (ancien nom possible : `dataset.csv`). |
 | **`src/board_encoding.py`** | Conversion plateau 3×3 → 18 features (même convention que le CSV). |
 | **`src/ml_baseline_service.py`** | Entraînement des deux régressions logistiques + prédictions (utilisé par l’interface, logique alignée sur le notebook). |
 | **`streamlit_app.py`** | Interface Streamlit (sans Node.js) : test ML, HvH, HvIA. |
