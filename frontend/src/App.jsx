@@ -19,33 +19,26 @@ function checkWinner(board) {
   return null;
 }
 
-// API Configuration - Update with your Python backend URL
 const API_BASE_URL = "https://ml-examen-backend.onrender.com";
 
-// Helper function to convert board state to features array (18 binary features)
-// This follows the standard Tic-Tac-Toe encoding used in the UCI dataset
 function boardToFeatures(board) {
-  // Features: [x1, x2, x3, x4, x5, x6, x7, x8, x9, o1, o2, o3, o4, o5, o6, o7, o8, o9]
   const features = new Array(18).fill(0);
 
   for (let i = 0; i < 9; i++) {
     if (board[i] === "X") {
-      features[i] = 1; // X positions in first 9 slots
+      features[i] = 1;
     } else if (board[i] === "O") {
-      features[i + 9] = 1; // O positions in last 9 slots
+      features[i + 9] = 1;
     }
   }
 
   return features;
 }
 
-// AI Decision function for VS IA mode (uses Logistic Regression via FastAPI)
 async function getAIMoveLogistic(board, aiPlayer = "O") {
   try {
-    // Convert board to features
     const features = boardToFeatures(board);
 
-    // Call the FastAPI endpoint
     const response = await fetch(`${API_BASE_URL}/predict`, {
       method: "POST",
       headers: {
@@ -63,7 +56,6 @@ async function getAIMoveLogistic(board, aiPlayer = "O") {
     const result = await response.json();
     console.log("AI Prediction:", result);
 
-    // Get all available positions
     const available = board.reduce((arr, cell, idx) => {
       if (cell === null) arr.push(idx);
       return arr;
@@ -71,22 +63,13 @@ async function getAIMoveLogistic(board, aiPlayer = "O") {
 
     if (available.length === 0) return null;
 
-    // Use the model's prediction to guide move selection
-    // Since the model predicts win probability for X, we need to adapt for O (AI)
-    const winProbabilityForX = result.win_probability;
-
-    // For AI playing as O, we want to minimize X's win probability
-    // So we evaluate each possible move and choose the one that minimizes X's chance of winning
     let bestMove = null;
     let bestScore = aiPlayer === "O" ? Infinity : -Infinity;
 
-    // Evaluate each possible move using the ML model
     for (const move of available) {
-      // Simulate AI placing its mark
       const testBoard = [...board];
       testBoard[move] = aiPlayer;
 
-      // Convert to features and get prediction
       const testFeatures = boardToFeatures(testBoard);
       const testResponse = await fetch(`${API_BASE_URL}/predict`, {
         method: "POST",
@@ -100,14 +83,12 @@ async function getAIMoveLogistic(board, aiPlayer = "O") {
         const testResult = await testResponse.json();
 
         if (aiPlayer === "O") {
-          // AI wants to minimize X's win probability
           const score = testResult.win_probability;
           if (score < bestScore) {
             bestScore = score;
             bestMove = move;
           }
         } else {
-          // If AI ever plays as X (future use), maximize win probability
           const score = testResult.win_probability;
           if (score > bestScore) {
             bestScore = score;
@@ -117,7 +98,6 @@ async function getAIMoveLogistic(board, aiPlayer = "O") {
       }
     }
 
-    // Fallback: if API fails or no best move found, use heuristic
     if (bestMove === null) {
       return getHeuristicMove(board, aiPlayer);
     }
@@ -125,12 +105,10 @@ async function getAIMoveLogistic(board, aiPlayer = "O") {
     return bestMove;
   } catch (error) {
     console.error("AI API error, falling back to heuristic:", error);
-    // Fallback to simple heuristic if API is unavailable
     return getHeuristicMove(board, aiPlayer);
   }
 }
 
-// Simple heuristic fallback for AI (win/block/center/corner)
 function getHeuristicMove(board, aiPlayer) {
   const opponent = aiPlayer === "X" ? "O" : "X";
   const available = board.reduce((arr, cell, idx) => {
@@ -140,42 +118,59 @@ function getHeuristicMove(board, aiPlayer) {
 
   if (available.length === 0) return null;
 
-  // Try winning move
   for (let move of available) {
     const testBoard = [...board];
     testBoard[move] = aiPlayer;
     if (checkWinner(testBoard)?.winner === aiPlayer) return move;
   }
 
-  // Try blocking opponent
   for (let move of available) {
     const testBoard = [...board];
     testBoard[move] = opponent;
     if (checkWinner(testBoard)?.winner === opponent) return move;
   }
 
-  // Center
   if (available.includes(4)) return 4;
 
-  // Corners
   const corners = [0, 2, 6, 8].filter((c) => available.includes(c));
   if (corners.length)
     return corners[Math.floor(Math.random() * corners.length)];
 
-  // Random
   return available[Math.floor(Math.random() * available.length)];
 }
 
-// Placeholder for VS Hybrid mode (Minimax depth 3 + ML model check)
-// You'll implement this later with your Python backend
 async function getHybridMove(board, aiPlayer = "O") {
-  // TODO: Implement Hybrid mode with your Python backend
-  // This should call a different endpoint like /api/hybrid-move
-  // that combines Minimax depth 3 with ML model evaluation
+  try {
+    const boardStrings = board.map(cell => cell === null ? "" : cell);
+    
+    const response = await fetch(`${API_BASE_URL}/hybrid-move`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ board: boardStrings }),
+    });
 
-  // For now, fallback to heuristic
-  console.log("Hybrid mode - to be implemented with Python backend");
-  return getHeuristicMove(board, aiPlayer);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Hybrid API Error:", errorData);
+      throw new Error(errorData.detail || "Hybrid API request failed");
+    }
+
+    const result = await response.json();
+    console.log("Hybrid AI Move:", result);
+    
+    if (result.move !== undefined && result.move !== -1) {
+      return result.move;
+    } else {
+      console.log("No valid move from hybrid API, using heuristic");
+      return getHeuristicMove(board, aiPlayer);
+    }
+    
+  } catch (error) {
+    console.error("Hybrid AI API error, falling back to heuristic:", error);
+    return getHeuristicMove(board, aiPlayer);
+  }
 }
 
 const MODES = [
@@ -230,7 +225,7 @@ const MODES = [
     cls: "ia",
     badge: "ML",
     p2: "IA",
-    aiFunction: getAIMoveLogistic, // Uses Logistic Regression via FastAPI
+    aiFunction: getAIMoveLogistic,
   },
   {
     id: "is",
@@ -254,7 +249,7 @@ const MODES = [
     cls: "is",
     badge: "HYBRID",
     p2: "IS",
-    aiFunction: getHybridMove, // To be implemented with Python backend
+    aiFunction: getHybridMove,
   },
 ];
 
@@ -307,7 +302,6 @@ const css = `
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── MENU ── */
   .menu {
     position: relative; z-index: 1;
     display: flex; flex-direction: column; align-items: center; gap: 36px;
@@ -422,7 +416,6 @@ const css = `
     text-transform: uppercase; color: var(--muted); opacity: 0.45;
   }
 
-  /* ── GAME ── */
   .game {
     position: relative; z-index: 1;
     display: flex; flex-direction: column; align-items: center; gap: 26px;
@@ -638,7 +631,6 @@ function OSymbol() {
   );
 }
 
-// Mode Menu Component
 function ModeMenu({ onSelect }) {
   return (
     <>
@@ -697,7 +689,6 @@ function ModeMenu({ onSelect }) {
   );
 }
 
-// Game Board Component
 function GameBoard({ mode, onBack }) {
   const meta = MODES.find((m) => m.id === mode);
   const aiFunction = meta?.aiFunction;
@@ -713,7 +704,6 @@ function GameBoard({ mode, onBack }) {
   const isDraw = !result && board.every(Boolean);
   const gameOver = !!result || isDraw;
 
-  // Update scores when game ends
   useEffect(() => {
     if (result) {
       setScores((s) => ({ ...s, [result.winner]: s[result.winner] + 1 }));
@@ -722,13 +712,12 @@ function GameBoard({ mode, onBack }) {
     }
   }, [result?.winner, isDraw]);
 
-  // AI Move Effect
   useEffect(() => {
     const isAITurn = () => {
       if (gameOver) return false;
       if (mode === "2p") return false;
       const currentPlayer = xIsNext ? "X" : "O";
-      return currentPlayer === "O"; // AI always plays as O in VS modes
+      return currentPlayer === "O";
     };
 
     if (isAITurn() && !isAIThinking && aiFunction) {
@@ -746,7 +735,7 @@ function GameBoard({ mode, onBack }) {
             const newBoard = [...board];
             newBoard[move] = "O";
             setBoard(newBoard);
-            setXIsNext(true); // Switch back to player (X)
+            setXIsNext(true);
             setRipple({ idx: move, key: Date.now() });
           }
         } catch (error) {
@@ -767,7 +756,7 @@ function GameBoard({ mode, onBack }) {
 
   const handleClick = async (idx) => {
     if (board[idx] || gameOver) return;
-    if (mode !== "2p" && !xIsNext) return; // Only player (X) can click in AI modes
+    if (mode !== "2p" && !xIsNext) return;
     if (isAIThinking) return;
 
     const newBoard = [...board];
@@ -809,7 +798,7 @@ function GameBoard({ mode, onBack }) {
   } else if (mode !== "2p" && !xIsNext && !gameOver) {
     statusContent = (
       <span className="status-text">
-        {isAIThinking ? "🤖 AI thinking..." : "🤖 AI is calculating..."}
+        {isAIThinking ? "AI thinking..." : "AI is calculating..."}
       </span>
     );
   } else {
@@ -946,7 +935,6 @@ function GameBoard({ mode, onBack }) {
   );
 }
 
-// Root App Component
 export default function App() {
   const [mode, setMode] = useState(null);
   if (!mode) return <ModeMenu onSelect={setMode} />;

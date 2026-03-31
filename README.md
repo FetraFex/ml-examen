@@ -5,20 +5,11 @@
 </p>
 
 <p align="center">
-  <a href="#">
-    <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <a href="https://ml-examen.vercel.app/">
+    <img src="https://img.shields.io/badge/Demo-Live%20Project-success?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo">
   </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy">
-  </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="Pandas">
-  </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" alt="Scikit-Learn">
-  </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+  <a href="https://github.com/FetraFex/ml-examen">
+    <img src="https://img.shields.io/badge/Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub">
   </a>
 </p>
 
@@ -35,31 +26,62 @@
 
 ---
 
-## Réponses aux Questions (Q1 - Q4)
+## Description du Projet
 
-### Q1 — Analyse des coefficients (Régression Logistique)
+Ce projet a été réalisé dans le cadre de l'examen de Machine Learning à l'ISPM. Il consiste en la création d'une plateforme interactive de **Morpion (Tic-Tac-Toe)** augmentée par l'intelligence artificielle. L'objectif est de comparer des modèles statistiques classiques (Régression Logistique) avec des algorithmes hybrides pour prédire l'issue d'une partie en temps réel.
 
-- **Observations :** Pour le modèle `x_wins`, les coefficients les plus élevés se trouvent sur la **case centrale (index 4)** et les **quatre coins (0, 2, 6, 8)**. Une occupation par 'X' sur ces cases a un coefficient positif fort, tandis qu'une occupation par 'O' a un coefficient négatif marqué.
-- **Influence du centre :** **Oui**, la case centrale est la plus influente car elle appartient à 4 combinaisons gagnantes potentielles (ligne, colonne et les 2 diagonales).
-- **Cohérence stratégique :** C'est parfaitement cohérent avec la stratégie humaine : contrôler le centre maximise les chances de créer des menaces multiples (fourchettes) tout en bloquant l'adversaire.
-
-### Q2 — Déséquilibre des classes
-
-- **État du Dataset :** Le dataset est naturellement déséquilibré. Les victoires (~60-70%) sont beaucoup plus fréquentes que les matchs nuls (< 10%).
-- **Métrique privilégiée :** Nous privilégions le **F1-Score**.
-- **Pourquoi :** L'**Accuracy** est trompeuse sur un dataset déséquilibré. Un modèle qui prédirait toujours "pas de match nul" aurait une bonne Accuracy mais serait inutile. Le F1-Score force le modèle à être performant sur la classe minoritaire (le nul) en combinant précision et rappel.
-
-### Q3 — Comparaison des modèles (Wins vs Draw)
-
-- **Performance :** Le modèle `x_wins` obtient généralement de meilleurs scores que le modèle `is_draw`.
-- **Difficulté d'apprentissage :** Le modèle `is_draw` est plus complexe à entraîner. Un nul ne dépend pas d'un seul "bon coup", mais d'une **succession parfaite de blocages**. C'est une condition structurelle plus difficile à capturer pour un modèle linéaire.
-- **Erreurs types :** Les erreurs surviennent surtout en fin de partie (saturation de pions) ou sur des tactiques de "fourchettes" que la Régression Logistique peine à modéliser par sa nature linéaire.
-
-### Q4 — Mode Hybride (Minimax + ML)
-
-- **Comportement :** Le mode **Hybride** est plus rigoureux et impitoyable. Contrairement au ML pur qui réagit statistiquement, l'Hybride ne rate jamais un coup gagnant immédiat.
-- **Évitement des pièges :** **Oui**, l'Hybride évite parfaitement les pièges. Grâce au **Minimax**, il explore l'arbre des possibles pour choisir la case mathématiquement sûre, là où le ML pur pourrait privilégier une case "statistiquement bonne" mais tactiquement perdante.
+**Lien du projet :** [https://ml-examen.vercel.app/](https://ml-examen.vercel.app/)
 
 ---
 
-Lien vidéo: [Vidéo de présentation](https://drive.google.com/file/d/1covfbs8eK48zV7f3qOvspRAW0894Neas/view?usp=sharing)
+## Structure du Répertoire
+
+L'architecture suit une séparation stricte entre la logique de données et l'interface utilisateur :
+
+- `root` : Fichiers de configuration et documentation.
+- `backend/` : Serveur **FastAPI** gérant les prédictions du modèle.
+  - `main.py` : Points de terminaison de l'API.
+  - `models/` : Modèles sérialisés (`.pkl`).
+- `frontend/` : Interface client développée avec **React**.
+- `notebooks/` : Analyse exploratoire et entraînement des modèles (Baselines).
+- `src/` : Les fichiers générteur de dataset.
+- `ressources/` : Les fichiers dataset.
+
+---
+
+## Résultats Machine Learning
+
+Nous avons évalué nos modèles sur deux cibles : la victoire de X (`x_wins`) et le match nul (`is_draw`).
+
+| Modèle                | Cible     | Accuracy | F1-Score |
+| :-------------------- | :-------- | :------: | :------: |
+| Régression Logistique | `x_wins`  | **~98%** | **0.98** |
+| Régression Logistique | `is_draw` |   ~91%   |   0.45   |
+
+_Note : Le modèle de victoire est extrêmement performant, tandis que le match nul reste un défi statistique dû au déséquilibre naturel du dataset._
+
+---
+
+## Réponses aux Questions (Q1 - Q4)
+
+### Q1 — Analyse des coefficients
+
+Les coefficients les plus élevés se situent sur la **case centrale (index 4)** et les **quatre coins**. Cela confirme mathématiquement que le contrôle du centre est la stratégie pivot pour maximiser les menaces de victoire.
+
+### Q2 — Déséquilibre des classes
+
+Le dataset contient environ 60-70% de victoires contre moins de 10% de nuls. Nous privilégions le **F1-Score** car l'Accuracy ignorerait la difficulté du modèle à prédire correctement la classe minoritaire (le nul).
+
+### Q3 — Comparaison des modèles (Wins vs Draw)
+
+Le modèle `x_wins` surpasse `is_draw`. Prédire un nul est complexe car il ne s'agit pas d'une position gagnante isolée, mais d'une **succession parfaite de blocages** mutuels, ce qui est moins linéaire à apprendre.
+
+### Q4 — Mode Hybride (Minimax + ML)
+
+Le mode **Hybride** est impitoyable. En combinant l'exploration de l'arbre des possibles du **Minimax** avec les probabilités du ML, l'IA évite tous les pièges tactiques (fourchettes) et garantit un jeu sans erreur.
+
+---
+
+<p align="right"><i>Dernière mise à jour : 31 mars 2026.</i></p>
+
+Lien Vidéo: [Vidéo](https://drive.google.com/file/d/1covfbs8eK48zV7f3qOvspRAW0894Neas/view?usp=sharing)
