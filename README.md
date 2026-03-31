@@ -96,6 +96,8 @@ Puis dans le navigateur : ouvrir **`baseline_logistic_regression.ipynb`**, véri
 
 ---
 
+Réponses 5.Questions README (Q1-Q4)
+
 Q1 — Analyse des coefficients (Régression Logistique)
 Observations : Pour le modèle x_wins, les coefficients les plus élevés en valeur absolue se trouvent sur la case centrale (index 4) et les quatre coins (0, 2, 6, 8). Une occupation par 'X' sur ces cases a un coefficient positif fort, tandis qu'une occupation par 'O' a un coefficient négatif fort.
 
