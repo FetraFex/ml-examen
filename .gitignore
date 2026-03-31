@@ -31,6 +31,9 @@ htmlcov/
 .env
 .env.*
 
+# Node (frontend React)
+node_modules/
+
 # OS / éditeurs
 .DS_Store
 Thumbs.db

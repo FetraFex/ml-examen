@@ -74,20 +74,43 @@ Le notebook inclut aussi :
 | **`ressources/`** | Dossier attendu pour **`dataset.csv`** (chemin relatif utilisé dans le notebook). |
 | **`src/board_encoding.py`** | Conversion plateau 3×3 → 18 features (même convention que le CSV). |
 | **`src/ml_baseline_service.py`** | Entraînement des deux régressions logistiques + prédictions (utilisé par l’interface, logique alignée sur le notebook). |
-| **`streamlit_app.py`** | Interface : **test des prédictions** sur un plateau encodé à la main, **Humain vs Humain**, **Humain vs IA** (heuristique ML). Ne modifie pas le notebook. |
+| **`streamlit_app.py`** | Interface Streamlit (sans Node.js) : test ML, HvH, HvIA. |
+| **`api/main.py`** | API **FastAPI** : `/api/predict`, `/api/ai-move`, `/api/health` pour le frontend React. |
+| **`frontend/`** | Interface **React** (Vite) : même usage que Streamlit, appelle l’API via proxy. |
+| **`run_api.sh`** | Lance `uvicorn` sur le port **8000**. |
 | **`docs/ARCHITECTURE.md`** | Vue d’ensemble des dossiers / fichiers cible hackathon. |
 | **`docs/PROCHAINES_ETAPES.md`** | Ordre recommandé : générateur → EDA → baseline → modèles avancés → interface complète → README final. |
 
-### Interface utilisateur (test des modèles)
+### Interface utilisateur
+
+**Option A — React (recommandé pour le front moderne)** : API FastAPI + Vite/React.
+
+Terminal 1 (backend, port 8000) :
 
 ```bash
 cd ml-examen
 source .venv/bin/activate
 pip install -r requirements.txt
+./run_api.sh
+```
+
+Terminal 2 (frontend, port 5173) :
+
+```bash
+cd ml-examen/frontend
+npm install
+npm run dev
+```
+
+Ouvre `http://localhost:5173` — le proxy Vite envoie `/api/*` vers l’API. Fichiers : `api/main.py`, `frontend/`.
+
+**Option B — Streamlit** (sans Node.js) :
+
+```bash
 streamlit run streamlit_app.py
 ```
 
-Ouvre l’URL affichée (souvent `http://localhost:8501`). Mode **« Test ML »** : régler chaque case (vide / X / O) et lire **P(x_wins)** et **P(is_draw)**. Les modes **Humain vs Humain** et **Humain vs IA** permettent de jouer ; l’IA utilise les mêmes modèles baseline (heuristique sur les coups possibles).
+URL souvent `http://localhost:8501`. Même logique ML (test prédictions, Humain vs Humain, Humain vs IA).
 
 ### Installation et exécution (résumé)
 
