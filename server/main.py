@@ -72,6 +72,7 @@ async def predict(data: GameState):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+
 if __name__ == "__main__":
     import uvicorn
 
