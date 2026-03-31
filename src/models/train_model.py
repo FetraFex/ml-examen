@@ -13,12 +13,12 @@ from sklearn.model_selection import train_test_split
 def load_dataset() -> tuple[pd.DataFrame, Path]:
     # Structure de dossier
     project_root = Path(__file__).resolve().parents[2]
-    dataset_path = project_root / "ressources" / "test_dataset.csv"
+    dataset_path = project_root / "ressources" / "dataset_morpion.csv"
 
     if not dataset_path.exists():
         raise FileNotFoundError(
             f"Dataset introuvable : {dataset_path}\n"
-            "Vérifie que le fichier ressources/test_dataset.csv existe."
+            "Vérifie que le fichier ressources/dataset_morpion.csv existe."
         )
 
     return pd.read_csv(dataset_path), dataset_path
@@ -99,7 +99,7 @@ def main() -> None:
     
     # Visualisation des coefficients (Obligatoire E2)
     plot_coefficients(model_is_draw, "Coefficients - Prediction Match Nul")
-    
+
 
 # ============================================================================================
 # ============== FIN _ Étape 2 : Baseline : Régression Logistique  (×2) ======================
