@@ -47,6 +47,7 @@ Thumbs.db
 
 # Bytecode python
 __pycache__/
+node_modules/
 *.pyc
 *.pyo
 >>>>>>> a74a1e000a9ba0e7499c4fa972484358dc819ae1
