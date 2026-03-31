@@ -1,4 +1,4 @@
-from dataset_generator import (
+from src.dataset_generator import (
     X,
     O,
     VIDE,
