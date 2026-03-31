@@ -135,4 +135,28 @@ Puis dans le navigateur : ouvrir **`baseline_logistic_regression.ipynb`**, véri
 
 ---
 
+### Contenu intégré depuis `FETRA/ml-examen` (branche *interface_project*)
+
+Les fichiers suivants ont été **copiés** dans ce dépôt (sans remplacer `dataset2.csv` utilisé par la baseline actuelle) :
+
+| Élément | Description |
+| -------- | ----------- |
+| `src/dataset_generator.py` | Génération d’états + Minimax (labels) |
+| `src/generate_dataset_minimax.py` | Script CLI : exporte `ressources/dataset.csv` (lancer depuis la racine `ml-examen`) |
+| `src/generator_fetra.py` | Autre générateur / Minimax (copie renommée pour éviter conflit de nom) |
+| `src/advanced_models/XGBoost.ipynb`, `MLPClassifier.ipynb` | Modèles avancés |
+| `ressources/dataset_morpion.csv`, `dataset_fetra_branch.csv` | Jeux de données fournis par la branche |
+| `ressources/model_*.pkl` | Modèles XGBoost / MLP sauvegardés |
+
+**Générer le CSV avec le script FETRA** (depuis `ml-examen/`) :
+
+```bash
+source .venv/bin/activate
+python -m src.generate_dataset_minimax
+```
+
+Les notebooks avancés : ouvrir `src/advanced_models/` dans Jupyter. Installer `xgboost` si besoin : `pip install xgboost`.
+
+---
+
 *Dernière mise à jour de cette section : documentation des scripts et du notebook baseline (régression logistique Morpion).*

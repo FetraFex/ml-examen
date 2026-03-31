@@ -7,3 +7,5 @@ ipykernel>=6.0
 streamlit>=1.28
 fastapi>=0.109
 uvicorn[standard]>=0.27
+# Notebooks avancés (branche interface_project / FETRA)
+xgboost>=2.0
